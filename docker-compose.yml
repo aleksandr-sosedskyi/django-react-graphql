@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  database:
+    image: postgres:latest
+    container_name: database
+
+  server:
+    build: ./server/
+    container_name: server
+    working_dir: /var/www/server
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./server/:/var/www/server
+      - ./client/:/var/www/client/
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+
+  client:
+    image: node:latest
+    container_name: client
+    working_dir: /var/www/client/
+    command: yarn start
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./server/:/var/www/server
+      - ./client/:/var/www/client/
+    
